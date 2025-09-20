@@ -636,7 +636,6 @@ MCP2515::ERROR MCP2515::sendMessage(const struct can_frame *frame)
         const struct TXBn_REGS *txbuf = &TXB[txBuffers[i]];
         uint8_t ctrlval = readRegister(txbuf->CTRL);
         if ( (ctrlval & TXB_TXREQ) == 0 ) {
-            Serial.println(frame->can_id, HEX);
             return sendMessage(txBuffers[i], frame);
         }
     }

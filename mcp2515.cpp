@@ -599,7 +599,11 @@ MCP2515::ERROR MCP2515::sendMessage(const TXBn txbn, const struct can_frame *fra
 
     uint8_t data[13];
 
-    bool ext = (frame->can_id & CAN_EFF_FLAG);
+    bool ext = false;
+    if (frame->can_id > 0x7FF)
+    {
+        ext = true;
+    }
     bool rtr = (frame->can_id & CAN_RTR_FLAG);
     uint32_t id = (frame->can_id & (ext ? CAN_EFF_MASK : CAN_SFF_MASK));
 
@@ -653,7 +657,6 @@ MCP2515::ERROR MCP2515::readMessage(const RXBn rxbn, struct can_frame *frame)
         id = (id<<2) + (tbufdata[MCP_SIDL] & 0x03);
         id = (id<<8) + tbufdata[MCP_EID8];
         id = (id<<8) + tbufdata[MCP_EID0];
-        id |= CAN_EFF_FLAG;
     }
 
     uint8_t dlc = (tbufdata[MCP_DLC] & DLC_MASK);
